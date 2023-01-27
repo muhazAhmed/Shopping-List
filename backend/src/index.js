@@ -4,6 +4,7 @@ const app = express();
 const mongoose = require('mongoose');
 mongoose.set("strictQuery", true);
 require ("dotenv").config()
+const cookies = require('cookie-parser')
 const route = require("./route")
 
 //MongoDB configuration
@@ -14,6 +15,7 @@ mongoose.connect(process.env.DB, { useNewUrlParser: true })
 // Middleware
 app.use(express.json()); // for parsing application/json
 app.use(cors())
+app.use(cookies())
 app.use("/", route)
 
 // Routes
