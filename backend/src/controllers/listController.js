@@ -15,90 +15,58 @@ const fetchProduct = async (req,res)=>{
 const list = async (req,res)=>{
     try {
         let data=req.body
-        let{userName,items}=data
-        let pname=data.items[0].productName
+        let{email,items}=data
+        let pname=data.items[0].products
  
-            let name= await adminModel.findOne({pname})
-            let presentList=await listModel.findOne({userName})
-            if(presentList){
-                let p=name.cost
-                
-                if(data.items[0].quantity=="500g"){
-                     p=(name.cost)*2
-                }
-                if(data.items[0].quantity=="1kg"){
-                     p=(name.cost)*4
-                }
-                if(data.items[0].quantity=="3kg"){
-                     p=(name.cost)*12
-                }
-                if(data.items[0].quantity=="5kg"){
-                    p=(name.cost)*20
-                }
-             let arr= presentList.items
-             let adminP=name.name
+            let name= await adminModel.findOne({name:pname})
 
-             for(i = 0; i < arr.length; i++){
-                let listP=presentList.items[i].products
+            let presentList=await listModel.findOne({email})
+            if(presentList){
+                let p=name.cost*1
+                
+                let arr= presentList.items
+                let adminP=name.name
+                for(i = 0; i < arr.length; i++){
+                    let listP=presentList.items[i].products
+
                 if(adminP==listP){
-                 let totatQ=(presentList.items[i].quantity)+(data.items[0].quantity)
+               
+                 let totatQ=(presentList.items[i].quantity)+1
                  let arrP=(presentList.items[i].priceTotal)+p
                  let finalP=presentList.totalPrice+p
                  let totalI=arr.length
-                 let obj={
-                    items:[{
-                        products:listP,
-                        quantity:totatQ,
-                        priceTotal:arrP
-                    }],
-                    totalPrice:finalP,
-                    totalitems:totalI
-                 }
-                 let updateSame= await listModel.updateOne({userName},obj,{new:true})
-                 return res.status(200).json(updateSame)
+                 presentList.items[i].quantity=totatQ
+                 presentList.items[i].priceTotal=arrP
+                 presentList.totalPrice=finalP
+                 presentList.totalitems=totalI
+                 presentList.save()
+                 return res.status(200).json(presentList)
                 }
-                // else{
-                //     let item={
-                //         products:data.items[0].products,
-                //         quantity:data.quantity,
-                //         priceTotal:p 
-                //     }
-                //     presentList.items.push(item)
-                //     presentList.totalPrice=presentList.totalPrice+p
-                //     totalitems=presentList.items.length
+            }
+                    let item={
+                        products:data.items[0].products,
+                        quantity:1,
+                        priceTotal:p 
+                    }
+                    presentList.items.push(item)
+                    presentList.totalPrice=presentList.totalPrice+p
+                    presentList.totalitems=arr.length
                 
-                //     presentList.save()
-                //  return res.status(200).json(presentList)   
-
-                // }
-
-             }   
+                    presentList.save()
+                 return res.status(200).json(presentList)        
             }else{
                 let price=name.cost             
    
-                let p=price
-                
-                if(data.items[0].quantity=="500g"){
-                     p=price*2
-                }
-                if(data.items[0].quantity=="1kg"){
-                     p=price*4
-                }
-                if(data.items[0].quantity=="3kg"){
-                     p=price*12
-                }
-                if(data.items[0].quantity=="5kg"){
-                    p=price*20
-                }
+        
                 let product={
-                    userName:data.userName,
+                    email:data.email,
                     items:[{
                     products:name.name,
-                    quantity:data.items[0].quantity,
-                    priceTotal:p
+                    quantity:1,
+                    priceTotal:price
                     }
                  ],
-                totalPrice:p,
+                totalPrice:price,
                 totalitems:1
                 }
         let newList= await listModel.create(product)
@@ -113,4 +81,14 @@ const list = async (req,res)=>{
     }
 }
 
-module.exports={fetchProduct,list}
+const fetchList = async (req,res)=>{
+    try {
+        let data =req.body.email
+        let userList=await listModel.findOne({data})
+        return res.status(200).json(userList)
+        
+    } catch (error) {
+        return res.status(500).json(error.message)     
+    }
+}
+module.exports={fetchProduct,list,fetchList}

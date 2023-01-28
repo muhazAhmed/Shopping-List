@@ -4,11 +4,11 @@ const mongoose = require("mongoose");
 const listSchema = new mongoose.Schema({
 
   // userId:objectId,
-  userName:String,
+  email:String,
   items: [
     {
       products: { type: String },
-      quantity: { type: String },
+      quantity: { type: Number ,default:1},
       priceTotal: { type: Number },
       _id:false
     },

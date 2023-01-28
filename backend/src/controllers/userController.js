@@ -11,7 +11,7 @@ const register = async (req, res) => {
         if (!email){
             return res.status(400).json("please enter email")
         }
-        let checkMail = await userModel.findOne(email)
+        let checkMail = await userModel.findOne({email})
         if (checkMail){
             return res.status(400).json("Email ALdready registerd")
         }
@@ -24,10 +24,10 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         let data = req.body.email
-        if (!email){
-            return res.status(400).json("please enter email")
+        if (!data){
+            return res.status(400).json("please enter data")
         }
-        let checkMail = await userModel.findOne(data)
+        let checkMail = await userModel.findOne({data})
         if(!checkMail){
             return res.status(400).json("Not registerd")
         }
@@ -35,7 +35,7 @@ const login = async (req, res) => {
             {
               userId: checkMail._id.toString(),
             },
-            process.env.JWT_SECRET,
+            "shoppinglist",
             { expiresIn: "1h" }
             );
             const { newPassword, ...other } = checkMail
@@ -50,4 +50,21 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = {register, login}
+
+const logout = async (req, res) => {
+    try {
+      res
+        .clearCookie("cookies_token", {
+          sameSite: "none",
+          secure: true,
+        })
+        .status(200)
+        .json("logged out");
+    } catch (error) {
+      return res.status(500).json(error.message);
+    }
+  };
+  
+
+
+module.exports = {register, login,logout}
