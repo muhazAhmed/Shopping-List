@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
+// const objectId= mongoose.Schema.Types.ObjectId
 
 const listSchema = new mongoose.Schema({
+
+  // userId:objectId,
+  userName:String,
   items: [
     {
       products: { type: String },
-      quantity: { type: Number },
+      quantity: { type: String },
       priceTotal: { type: Number },
+      _id:false
     },
   ],
   totalPrice: { type: Number },
