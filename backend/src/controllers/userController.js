@@ -27,7 +27,7 @@ const login = async (req, res) => {
         if (!data){
             return res.status(400).json("please enter data")
         }
-        let checkMail = await userModel.findOne({data})
+        let checkMail = await userModel.findOne({email:req.body.email})
         if(!checkMail){
             return res.status(400).json("Not registerd")
         }

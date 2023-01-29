@@ -83,8 +83,11 @@ const list = async (req,res)=>{
 
 const fetchList = async (req,res)=>{
     try {
-        let data =req.body.email
-        let userList=await listModel.findOne({data})
+        let data =req.query.email
+        let userList=await listModel.findOne({ data})
+        if(!userList){
+            return res.status(400).json("No data found")
+        }
         return res.status(200).json(userList)
         
     } catch (error) {
