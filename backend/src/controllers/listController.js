@@ -17,12 +17,13 @@ const list = async (req,res)=>{
         let data=req.body
         let{email,items}=data
         let pname=data.items[0].products
- 
-            let name= await adminModel.findOne({name:pname})
-
-            let presentList=await listModel.findOne({email})
-            if(presentList){
-                let p=name.cost*1
+        
+        let name= await adminModel.findOne({name:pname})
+        console.log(name)
+        
+        let presentList=await listModel.findOne({email})
+        if(presentList){
+            let p=name.cost*1
                 
                 let arr= presentList.items
                 let adminP=name.name
