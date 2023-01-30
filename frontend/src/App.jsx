@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Registed from "./pages/Registed";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Lists from "./pages/Lists";
 import PageNotFoud from "./pages/PageNotFoud";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/register" element={<Registed />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/lists" element={<Lists />} />
         <Route path="/*" element={<PageNotFoud />} />
       </Routes>
     </BrowserRouter>

@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { Link } from "react-router-dom";
+import Lists from "./Lists";
 
 const Dashboard = () => {
   const [err, setErr] = useState(null);
   const [item, setItem] = useState({});
   const [getItem, setGetItem] = useState({});
+  const [Items, setItems] = useState({});
 
   const [quantitys, setQuantitys] = useState(1);
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, logout } = useContext(AuthContext);
   let username = currentUser.username.toUpperCase();
   let id = currentUser.email;
 
@@ -18,16 +21,14 @@ const Dashboard = () => {
     email: currentUser.email,
     items: [
       {
-        products: item.name,
+        products: "",
         quantity: quantitys,
-        priceTotal: "" * quantitys,
       },
     ],
-    totalPrice: getItem.totalPrice,
-    totalItems: getItem.totalitems,
+    // totalPrice: getItem.totalPrice,
+    // totalItems: getItem.totalitems,
   });
-  const [Items, setItems] = useState({});
-
+  // console.log(list);
   const handleDropDown = (e) => {
     setItems((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -70,18 +71,28 @@ const Dashboard = () => {
     }
   };
 
+  // const handleCombine = () => {
+  //   handleChange()
+  //   handleDropDown()
+  // }
+
   useEffect(() => {
     fetchItems();
     fetchList();
   }, []);
   return (
     <div className="dashboard">
+      <div className="logout">
+        <Link to="/login">
+          <button onClick={logout}>Logout</button>
+        </Link>
+      </div>
       <div className="dropdown">
         <h1>WELCOME BACK {username}</h1>
-        <select name="Items" onChange={handleDropDown}>
+        <select name="name" onChange={handleDropDown}>
           <option defaultValue>Select Item</option>
           {Object.entries(item).map((items, index) => (
-            <option value={items[1].name} key={index}>
+            <option value={items[1].name} key={index} onChange={handleChange}>
               {items[1].name}
             </option>
           ))}
@@ -89,30 +100,55 @@ const Dashboard = () => {
       </div>
       <div className="dash-main">
         <div className="dash-content">
-          <h3>Name : {Items.Items}</h3>
-          <div>
+          <h3 onChange={handleChange}>Name : {Items.name}</h3>
+
           <h3 className="qnty">
-           Quantity <br/>
-            <button onClick={handleIncrease}>+</button>
-            <span> &nbsp;{quantitys}&nbsp; </span>
-            <button onClick={handleDecrease}>-</button>
-          </h3></div>
-          <h3>Price : 50</h3>
+            Quantity :&nbsp;
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {Object.entries(item).map((items, index) => (
+                <p value={items[1].cost} key={index}>
+                  {Items.Items == items[1].name ? items[1].unit : null}
+                </p>
+              ))}
+              <br />
+
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "20rem",
+                  left: "45.8rem",
+                }}
+              >
+                <button onClick={handleDecrease}>-</button>
+                <span onChange={handleChange}> &nbsp;{quantitys}&nbsp; </span>
+                <button onClick={handleIncrease}>+</button>
+              </div>
+            </div>
+          </h3>
+
+          <h3 className="qnty" style={{ marginTop: "2rem" }}>
+            Price :
+            {Object.entries(item).map((items, index) => (
+              <p value={items[1].cost} key={index}>
+                &nbsp;
+                {Items.name == items[1].name ? items[1].cost : null}
+              </p>
+            ))}
+          </h3>
           <div className="btn-2">
-          <button onClick={handleSubmit}>Add to Cart</button></div>
+            <button onClick={handleSubmit}>Add to List</button>
+          </div>
         </div>
-        <div className="btn-qnty">
-        {err && <p>{err}</p>}
-        </div>
-        <div className="cart">
-          <h3 onChange={handleChange}>Total Price : {getItem.totalPrice}</h3>
-          <h3 onChange={handleChange}>Total Items : {getItem.totalitems}</h3>
-        </div>
+      </div>
+      <div className="error">{err && <p>{err}</p>}</div>
+      <div className="list-btn">
+        <Link to="/lists">
+          <button>View List</button>
+        </Link>
       </div>
     </div>
   );
 };
 
 export default Dashboard;
-
-//quantity increase decrease button react?
+//send value of useState counter to backend in mern?
